@@ -1,0 +1,593 @@
+{
+  "generated": "2025-12-20T21:18:03.446Z",
+  "project": {
+    "name": "Plan de Alto Nivel: Merett Cloud",
+    "lastUpdated": "2025-12-20T21:18:03.447Z"
+  },
+  "sections": {
+    "highLevel": true,
+    "architecture": true,
+    "techStack": true,
+    "database": true,
+    "api": true,
+    "deployment": true,
+    "epics": false,
+    "sprints": true,
+    "tasks": true,
+    "decisions": false,
+    "design": false,
+    "testing": false
+  },
+  "sprint": {
+    "name": "Sprint 1: Fundamentos |",
+    "status": "active",
+    "objective": "Establecer la base sólida del proyecto Merett Cloud implementando el sistema completo de autenticación (JWT), configurando la infraestructura del backend (Node.js + Express + PostgreSQL), y creando las pantallas de login/registro en el frontend móvil con React Native + Expo. Este sprint es crítico para sentar las bases arquitectónicas y de seguridad sobre las cuales se construirán todas las features futuras.",
+    "startDate": "2025-12-23",
+    "endDate": "2026-01-03",
+    "daysRemaining": 14,
+    "progress": 0,
+    "tasks": {
+      "todo": 67,
+      "inProgress": 0,
+      "review": 0,
+      "done": 0,
+      "blocked": 0
+    },
+    "blockers": []
+  },
+  "epics": [],
+  "tasks": {
+    "backlog": [
+      {
+        "id": "BE-1.1",
+        "title": "Inicializar proyecto Node.js con TypeScript",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "BE-1.2",
+        "title": "Configurar estructura de carpetas según arquitectura",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "BE-1.3",
+        "title": "Setup de ESLint y Prettier",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "BE-1.4",
+        "title": "Configurar Prisma y conexión a PostgreSQL",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "BE-1.5",
+        "title": "Crear schema inicial de User en Prisma",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "BE-1.6",
+        "title": "Crear primera migración de base de datos",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "BE-1.7",
+        "title": "Crear seed inicial para testing",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "BE-1.8",
+        "title": "Configurar Express con middleware básicos (helmet, cors, compression)",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "BE-1.9",
+        "title": "Crear estructura de rutas y error handling global",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "BE-1.10",
+        "title": "Implementar generación de JWT tokens (access + refresh)",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "BE-1.11",
+        "title": "Crear middleware de autenticación JWT",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "BE-1.12",
+        "title": "Implementar hash de contraseñas con bcrypt",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "BE-1.13",
+        "title": "Endpoint POST /api/v1/auth/signup",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "BE-1.14",
+        "title": "Endpoint POST /api/v1/auth/login",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "BE-1.15",
+        "title": "Endpoint POST /api/v1/auth/refresh",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "BE-1.16",
+        "title": "Endpoint POST /api/v1/auth/logout",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "BE-1.17",
+        "title": "Endpoint POST /api/v1/auth/forgot-password",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "BE-1.18",
+        "title": "Endpoint POST /api/v1/auth/reset-password",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "BE-1.19",
+        "title": "Endpoint GET /api/v1/users/me",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "BE-1.20",
+        "title": "Implementar express-validator para validaciones",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "BE-1.21",
+        "title": "Crear validadores para todos los endpoints de auth",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "BE-1.22",
+        "title": "Implementar logging con Winston",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "FE-1.1",
+        "title": "Configurar variables de entorno (.env.dev)",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "FE-1.2",
+        "title": "Setup de API base URL en config",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "FE-1.3",
+        "title": "Configurar HTTP client (axios/fetch) con interceptors",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "FE-1.4",
+        "title": "Crear auth.slice.ts con Redux Toolkit",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "FE-1.5",
+        "title": "Implementar persistencia de auth state con AsyncStorage",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "FE-1.6",
+        "title": "Crear auth.service.ts con métodos de API",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "FE-1.7",
+        "title": "Implementar expo-secure-store para tokens",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "FE-1.8",
+        "title": "Crear utils/secureStorage.ts con helpers",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "FE-1.9",
+        "title": "Crear scene Login con formulario",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "FE-1.10",
+        "title": "Crear scene Register con formulario",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "FE-1.11",
+        "title": "Crear scene ForgotPassword",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "FE-1.12",
+        "title": "Crear scene ResetPassword",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "FE-1.13",
+        "title": "Crear InputField component con validación",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "FE-1.14",
+        "title": "Crear AuthButton component con loading state",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "FE-1.15",
+        "title": "Crear PasswordInput component (show/hide)",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "FE-1.16",
+        "title": "Crear ErrorMessage component",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "FE-1.17",
+        "title": "Configurar Expo Router para auth flow",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "FE-1.18",
+        "title": "Crear auth guard para rutas protegidas",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "FE-1.19",
+        "title": "Implementar auto-redirect basado en estado de auth",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "FE-1.20",
+        "title": "Actualizar scene Profile con info de usuario",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "FE-1.21",
+        "title": "Agregar botón de cerrar sesión en Profile",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "TEST-1.1",
+        "title": "Setup Jest para backend",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "TEST-1.2",
+        "title": "Tests unitarios para auth.service",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "TEST-1.3",
+        "title": "Tests unitarios para validators",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "TEST-1.4",
+        "title": "Tests de integración para endpoints de auth",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "TEST-1.5",
+        "title": "Configurar mocks de Prisma para tests",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "TEST-1.6",
+        "title": "Tests para auth.slice reducers",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "TEST-1.7",
+        "title": "Tests para auth.service frontend",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "TEST-1.8",
+        "title": "Tests para Login scene",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "TEST-1.9",
+        "title": "Tests para Register scene",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "TEST-1.10",
+        "title": "Snapshot tests para componentes",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "DEVOPS-1.1",
+        "title": "Crear workflow GitHub Actions para backend tests",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "DEVOPS-1.2",
+        "title": "Crear workflow GitHub Actions para frontend tests",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "DEVOPS-1.3",
+        "title": "Configurar lint check automático en CI",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "DEVOPS-1.4",
+        "title": "Documentar endpoints en Postman/Swagger",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "DEVOPS-1.5",
+        "title": "Actualizar README con instrucciones de setup",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      },
+      {
+        "id": "DEVOPS-1.6",
+        "title": "Documentar variables de entorno",
+        "completed": false,
+        "priority": "medium",
+        "epic": null,
+        "assignee": null,
+        "estimation": null
+      }
+    ],
+    "inProgress": [],
+    "review": [],
+    "completed": [],
+    "blocked": []
+  },
+  "decisions": [],
+  "metrics": {
+    "totalTasks": 59,
+    "completedTasks": 0,
+    "blockedTasks": 0,
+    "inProgressTasks": 0,
+    "pendingTasks": 59,
+    "reviewTasks": 0,
+    "bugs": {
+      "total": 0,
+      "open": 0
+    },
+    "projectProgress": 0,
+    "sprintProgress": 0
+  }
+}

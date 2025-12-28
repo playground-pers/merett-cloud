@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="es" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Project Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              dark: {
+                bg: '#0d1117',
+                card: '#161b22',
+                border: '#30363d',
+                text: '#c9d1d9',
+                muted: '#8b949e',
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .progress-bar {
+        background: linear-gradient(90deg, #238636 var(--progress), #30363d var(--progress));
+      }
+      .kanban-column {
+        min-height: 200px;
+      }
+      @keyframes pulse-dot {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+      .pulse-dot {
+        animation: pulse-dot 2s infinite;
+      }
+    </style>
+  </head>
+  <body class="bg-dark-bg text-dark-text min-h-screen">
+    <!-- Header -->
+    <header class="border-b border-dark-border bg-dark-card sticky top-0 z-10">
+      <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">📊</span>
+          <h1 id="project-name" class="text-xl font-semibold">Cargando...</h1>
+        </div>
+        <div class="flex items-center gap-4">
+          <span id="last-updated" class="text-sm text-dark-muted"></span>
+          <button
+            onclick="loadData()"
+            class="px-3 py-1 bg-dark-border hover:bg-dark-muted/20 rounded-md text-sm transition">
+            🔄 Actualizar
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
+      <!-- Loading State -->
+      <div id="loading" class="text-center py-20">
+        <div class="text-4xl mb-4">⏳</div>
+        <p class="text-dark-muted">Cargando datos del proyecto...</p>
+      </div>
+
+      <!-- Error State -->
+      <div id="error" class="hidden text-center py-20">
+        <div class="text-4xl mb-4">⚠️</div>
+        <p class="text-dark-muted mb-4">No se pudo cargar data.json</p>
+        <p class="text-sm text-dark-muted">
+          Ejecuta:
+          <code class="bg-dark-card px-2 py-1 rounded">node .project/dashboard/generate.js</code>
+        </p>
+      </div>
+
+      <!-- Dashboard Content -->
+      <div id="dashboard" class="hidden space-y-6">
+        <!-- Sprint Overview -->
+        <section id="sprint-section" class="bg-dark-card rounded-lg border border-dark-border p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+              🚀 <span id="sprint-name">Sprint</span>
+            </h2>
+            <span id="sprint-status" class="px-2 py-1 rounded text-xs font-medium"></span>
+          </div>
+
+          <div id="sprint-objective" class="text-dark-muted text-sm mb-4"></div>
+
+          <div class="flex items-center gap-4 mb-4">
+            <div id="sprint-dates" class="text-sm text-dark-muted"></div>
+            <div id="sprint-days" class="text-sm font-medium"></div>
+          </div>
+
+          <div class="relative h-4 bg-dark-border rounded-full overflow-hidden">
+            <div
+              id="sprint-progress-bar"
+              class="absolute inset-y-0 left-0 bg-green-600 rounded-full transition-all duration-500"></div>
+          </div>
+          <div class="flex justify-between mt-2 text-sm text-dark-muted">
+            <span id="sprint-progress-text">0%</span>
+            <span id="sprint-tasks-count"></span>
+          </div>
+        </section>
+
+        <!-- Quick Stats -->
+        <section class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          <div class="bg-dark-card rounded-lg border border-dark-border p-4 text-center">
+            <div class="text-2xl font-bold" id="stat-total">0</div>
+            <div class="text-sm text-dark-muted">Total Tareas</div>
+          </div>
+          <div class="bg-dark-card rounded-lg border border-dark-border p-4 text-center">
+            <div class="text-2xl font-bold text-yellow-500" id="stat-progress">0</div>
+            <div class="text-sm text-dark-muted">En Progreso</div>
+          </div>
+          <div class="bg-dark-card rounded-lg border border-dark-border p-4 text-center">
+            <div class="text-2xl font-bold text-blue-500" id="stat-review">0</div>
+            <div class="text-sm text-dark-muted">En Review</div>
+          </div>
+          <div class="bg-dark-card rounded-lg border border-dark-border p-4 text-center">
+            <div class="text-2xl font-bold text-green-500" id="stat-completed">0</div>
+            <div class="text-sm text-dark-muted">Completadas</div>
+          </div>
+          <div class="bg-dark-card rounded-lg border border-dark-border p-4 text-center">
+            <div class="text-2xl font-bold text-red-500" id="stat-blocked">0</div>
+            <div class="text-sm text-dark-muted">Bloqueadas</div>
+          </div>
+          <div class="bg-dark-card rounded-lg border border-dark-border p-4 text-center">
+            <div class="text-2xl font-bold text-orange-500" id="stat-bugs">0</div>
+            <div class="text-sm text-dark-muted">Bugs Abiertos</div>
+          </div>
+        </section>
+
+        <!-- Kanban Board -->
+        <section class="bg-dark-card rounded-lg border border-dark-border p-6">
+          <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">📋 Tablero de Tareas</h2>
+
+          <div id="kanban-empty" class="hidden text-center py-10 text-dark-muted">
+            <div class="text-4xl mb-2">📝</div>
+            <p>No hay tareas definidas aún</p>
+            <p class="text-sm mt-2">
+              Crea tareas en <code class="bg-dark-border px-1 rounded">tasks/backlog.md</code>
+            </p>
+          </div>
+
+          <div id="kanban-board" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Backlog -->
+            <div class="bg-dark-bg rounded-lg p-3">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="font-medium text-sm flex items-center gap-2">
+                  📋 Backlog
+                  <span id="count-backlog" class="bg-dark-border px-2 py-0.5 rounded-full text-xs"
+                    >0</span
+                  >
+                </h3>
+              </div>
+              <div id="tasks-backlog" class="space-y-2 kanban-column"></div>
+            </div>
+
+            <!-- In Progress -->
+            <div class="bg-dark-bg rounded-lg p-3">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="font-medium text-sm flex items-center gap-2">
+                  🚧 En Progreso
+                  <span
+                    id="count-inProgress"
+                    class="bg-yellow-500/20 text-yellow-500 px-2 py-0.5 rounded-full text-xs"
+                    >0</span
+                  >
+                </h3>
+              </div>
+              <div id="tasks-inProgress" class="space-y-2 kanban-column"></div>
+            </div>
+
+            <!-- Review -->
+            <div class="bg-dark-bg rounded-lg p-3">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="font-medium text-sm flex items-center gap-2">
+                  🔍 Review
+                  <span
+                    id="count-review"
+                    class="bg-blue-500/20 text-blue-500 px-2 py-0.5 rounded-full text-xs"
+                    >0</span
+                  >
+                </h3>
+              </div>
+              <div id="tasks-review" class="space-y-2 kanban-column"></div>
+            </div>
+
+            <!-- Completed -->
+            <div class="bg-dark-bg rounded-lg p-3">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="font-medium text-sm flex items-center gap-2">
+                  ✅ Completado
+                  <span
+                    id="count-completed"
+                    class="bg-green-500/20 text-green-500 px-2 py-0.5 rounded-full text-xs"
+                    >0</span
+                  >
+                </h3>
+              </div>
+              <div
+                id="tasks-completed"
+                class="space-y-2 kanban-column max-h-64 overflow-y-auto"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Blocked Tasks -->
+        <section
+          id="blocked-section"
+          class="hidden bg-red-500/10 border border-red-500/30 rounded-lg p-6">
+          <h2 class="text-lg font-semibold mb-4 flex items-center gap-2 text-red-400">
+            🚫 Tareas Bloqueadas
+          </h2>
+          <div id="tasks-blocked" class="space-y-2"></div>
+        </section>
+
+        <!-- Epics -->
+        <section class="bg-dark-card rounded-lg border border-dark-border p-6">
+          <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">📚 Épicas</h2>
+
+          <div id="epics-empty" class="hidden text-center py-10 text-dark-muted">
+            <div class="text-4xl mb-2">📚</div>
+            <p>No hay épicas definidas aún</p>
+            <p class="text-sm mt-2">
+              Crea épicas en <code class="bg-dark-border px-1 rounded">epics/</code>
+            </p>
+          </div>
+
+          <div id="epics-list" class="space-y-3"></div>
+        </section>
+
+        <!-- Sections Status -->
+        <section class="bg-dark-card rounded-lg border border-dark-border p-6">
+          <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+            📁 Estado de Documentación
+          </h2>
+          <div
+            id="sections-grid"
+            class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3"></div>
+        </section>
+
+        <!-- Decisions -->
+        <section
+          id="decisions-section"
+          class="bg-dark-card rounded-lg border border-dark-border p-6">
+          <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+            📋 Decisiones Técnicas (ADRs)
+          </h2>
+
+          <div id="decisions-empty" class="hidden text-center py-10 text-dark-muted">
+            <div class="text-4xl mb-2">📋</div>
+            <p>No hay decisiones documentadas aún</p>
+            <p class="text-sm mt-2">
+              Crea ADRs en <code class="bg-dark-border px-1 rounded">decisions/</code>
+            </p>
+          </div>
+
+          <div id="decisions-list" class="space-y-2"></div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-dark-border mt-10 py-6 text-center text-dark-muted text-sm">
+      <p>📊 .project Dashboard - Framework de Gestión IA-Humano</p>
+      <p class="mt-1">Generado: <span id="generated-time">-</span></p>
+    </footer>
+
+    <script>
+      // Estado global
+      let data = null;
+
+      // Cargar datos
+      async function loadData() {
+        const loading = document.getElementById('loading');
+        const error = document.getElementById('error');
+        const dashboard = document.getElementById('dashboard');
+
+        loading.classList.remove('hidden');
+        error.classList.add('hidden');
+        dashboard.classList.add('hidden');
+
+        try {
+          const response = await fetch('data.json?' + Date.now());
+          if (!response.ok) throw new Error('No se pudo cargar');
+          data = await response.json();
+          renderDashboard();
+          loading.classList.add('hidden');
+          dashboard.classList.remove('hidden');
+        } catch (e) {
+          console.error('Error cargando datos:', e);
+          loading.classList.add('hidden');
+          error.classList.remove('hidden');
+        }
+      }
+
+      // Renderizar dashboard
+      function renderDashboard() {
+        if (!data) return;
+
+        // Header
+        document.getElementById('project-name').textContent = data.project.name || 'Proyecto';
+        document.getElementById('last-updated').textContent = formatDate(data.generated);
+        document.getElementById('generated-time').textContent = formatDate(data.generated);
+
+        // Sprint
+        renderSprint();
+
+        // Stats
+        renderStats();
+
+        // Kanban
+        renderKanban();
+
+        // Blocked
+        renderBlocked();
+
+        // Epics
+        renderEpics();
+
+        // Sections
+        renderSections();
+
+        // Decisions
+        renderDecisions();
+      }
+
+      // Renderizar sprint
+      function renderSprint() {
+        const sprint = data.sprint;
+
+        document.getElementById('sprint-name').textContent = sprint.name;
+
+        // Status badge
+        const statusEl = document.getElementById('sprint-status');
+        const statusMap = {
+          active: { text: '🟢 Activo', class: 'bg-green-500/20 text-green-400' },
+          completed: { text: '✅ Completado', class: 'bg-blue-500/20 text-blue-400' },
+          planned: { text: '📅 Planificado', class: 'bg-gray-500/20 text-gray-400' },
+          none: { text: '⚪ Sin sprint', class: 'bg-gray-500/20 text-gray-400' },
+        };
+        const status = statusMap[sprint.status] || statusMap.none;
+        statusEl.textContent = status.text;
+        statusEl.className = `px-2 py-1 rounded text-xs font-medium ${status.class}`;
+
+        // Objective
+        const objectiveEl = document.getElementById('sprint-objective');
+        if (sprint.objective && !sprint.objective.includes('[Descripción')) {
+          objectiveEl.textContent = sprint.objective;
+          objectiveEl.classList.remove('hidden');
+        } else {
+          objectiveEl.classList.add('hidden');
+        }
+
+        // Dates
+        const datesEl = document.getElementById('sprint-dates');
+        if (sprint.startDate && sprint.endDate) {
+          datesEl.textContent = `${formatDateShort(sprint.startDate)} → ${formatDateShort(sprint.endDate)}`;
+        } else {
+          datesEl.textContent = 'Fechas no definidas';
+        }
+
+        // Days remaining
+        const daysEl = document.getElementById('sprint-days');
+        if (sprint.daysRemaining !== null) {
+          daysEl.textContent = `${sprint.daysRemaining} días restantes`;
+          daysEl.className =
+            sprint.daysRemaining <= 2
+              ? 'text-sm font-medium text-red-400'
+              : 'text-sm font-medium text-green-400';
+        } else {
+          daysEl.textContent = '';
+        }
+
+        // Progress bar
+        const progressBar = document.getElementById('sprint-progress-bar');
+        progressBar.style.width = `${sprint.progress}%`;
+        document.getElementById('sprint-progress-text').textContent =
+          `${sprint.progress}% completado`;
+
+        // Tasks count
+        const tasksCount = document.getElementById('sprint-tasks-count');
+        const total = sprint.tasks.todo + sprint.tasks.done;
+        tasksCount.textContent = total > 0 ? `${sprint.tasks.done}/${total} tareas` : '';
+      }
+
+      // Renderizar estadísticas
+      function renderStats() {
+        const metrics = data.metrics;
+        document.getElementById('stat-total').textContent = metrics.totalTasks;
+        document.getElementById('stat-progress').textContent = metrics.inProgressTasks;
+        document.getElementById('stat-review').textContent = metrics.reviewTasks;
+        document.getElementById('stat-completed').textContent = metrics.completedTasks;
+        document.getElementById('stat-blocked').textContent = metrics.blockedTasks;
+        document.getElementById('stat-bugs').textContent = metrics.bugs.open;
+      }
+
+      // Renderizar tablero Kanban
+      function renderKanban() {
+        const tasks = data.tasks;
+        const hasAnyTasks = Object.values(tasks).some(arr => arr.length > 0);
+
+        document.getElementById('kanban-empty').classList.toggle('hidden', hasAnyTasks);
+        document.getElementById('kanban-board').classList.toggle('hidden', !hasAnyTasks);
+
+        if (!hasAnyTasks) return;
+
+        // Render each column
+        ['backlog', 'inProgress', 'review', 'completed'].forEach(column => {
+          const container = document.getElementById(`tasks-${column}`);
+          const countEl = document.getElementById(`count-${column}`);
+          const columnTasks = tasks[column] || [];
+
+          countEl.textContent = columnTasks.length;
+          container.innerHTML =
+            columnTasks.length === 0
+              ? '<p class="text-dark-muted text-sm text-center py-4">Sin tareas</p>'
+              : columnTasks.map(task => createTaskCard(task, column)).join('');
+        });
+      }
+
+      // Crear tarjeta de tarea
+      function createTaskCard(task, column) {
+        const priorityColors = {
+          high: 'border-l-red-500',
+          medium: 'border-l-yellow-500',
+          low: 'border-l-green-500',
+        };
+        const priorityColor = priorityColors[task.priority] || priorityColors.medium;
+        const completed = column === 'completed' ? 'opacity-60' : '';
+
+        return `
+        <div class="bg-dark-card border border-dark-border border-l-4 ${priorityColor} rounded p-3 ${completed}">
+          <div class="flex items-start justify-between gap-2">
+            <div class="flex-1 min-w-0">
+              <span class="text-xs text-dark-muted">${task.id || 'Sin ID'}</span>
+              <p class="text-sm truncate" title="${task.title}">${task.title}</p>
+            </div>
+          </div>
+          ${task.epic ? `<span class="text-xs text-blue-400">${task.epic}</span>` : ''}
+          ${task.assignee ? `<span class="text-xs text-dark-muted ml-2">${task.assignee}</span>` : ''}
+        </div>
+      `;
+      }
+
+      // Renderizar bloqueados
+      function renderBlocked() {
+        const blocked = data.tasks.blocked || [];
+        const section = document.getElementById('blocked-section');
+        const container = document.getElementById('tasks-blocked');
+
+        if (blocked.length === 0) {
+          section.classList.add('hidden');
+          return;
+        }
+
+        section.classList.remove('hidden');
+        container.innerHTML = blocked
+          .map(
+            task => `
+        <div class="bg-dark-card border border-red-500/30 rounded p-3">
+          <div class="flex items-center gap-2">
+            <span class="text-red-400">🚫</span>
+            <span class="text-xs text-dark-muted">${task.id || 'Sin ID'}</span>
+            <span class="text-sm">${task.title}</span>
+          </div>
+        </div>
+      `,
+          )
+          .join('');
+      }
+
+      // Renderizar épicas
+      function renderEpics() {
+        const epics = data.epics || [];
+        const emptyEl = document.getElementById('epics-empty');
+        const listEl = document.getElementById('epics-list');
+
+        emptyEl.classList.toggle('hidden', epics.length > 0);
+
+        if (epics.length === 0) {
+          listEl.innerHTML = '';
+          return;
+        }
+
+        listEl.innerHTML = epics
+          .map(epic => {
+            const statusColors = {
+              pending: 'bg-gray-500',
+              'in-progress': 'bg-yellow-500',
+              completed: 'bg-green-500',
+              blocked: 'bg-red-500',
+            };
+            const color = statusColors[epic.status] || statusColors.pending;
+
+            return `
+          <div class="flex items-center gap-4 p-3 bg-dark-bg rounded-lg">
+            <div class="w-2 h-2 rounded-full ${color}"></div>
+            <div class="flex-1">
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-dark-muted">${epic.id}</span>
+                <span class="font-medium">${epic.name}</span>
+              </div>
+              <div class="flex items-center gap-4 mt-1">
+                <div class="flex-1 h-1.5 bg-dark-border rounded-full overflow-hidden">
+                  <div class="h-full bg-green-500 rounded-full" style="width: ${epic.progress}%"></div>
+                </div>
+                <span class="text-xs text-dark-muted w-12 text-right">${epic.progress}%</span>
+              </div>
+            </div>
+          </div>
+        `;
+          })
+          .join('');
+      }
+
+      // Renderizar estado de secciones
+      function renderSections() {
+        const sections = data.sections || {};
+        const container = document.getElementById('sections-grid');
+
+        const sectionLabels = {
+          highLevel: { label: 'Plan General', icon: '📋' },
+          architecture: { label: 'Arquitectura', icon: '🏗️' },
+          techStack: { label: 'Tech Stack', icon: '🔧' },
+          database: { label: 'Base de Datos', icon: '🗄️' },
+          api: { label: 'API', icon: '🔌' },
+          deployment: { label: 'Deployment', icon: '🚀' },
+          epics: { label: 'Épicas', icon: '📚' },
+          sprints: { label: 'Sprints', icon: '🏃' },
+          tasks: { label: 'Tareas', icon: '✅' },
+          decisions: { label: 'Decisiones', icon: '📋' },
+          design: { label: 'Diseño', icon: '🎨' },
+          testing: { label: 'Testing', icon: '🧪' },
+        };
+
+        container.innerHTML = Object.entries(sectionLabels)
+          .map(([key, { label, icon }]) => {
+            const defined = sections[key];
+            return `
+          <div class="flex items-center gap-2 p-2 rounded ${defined ? 'bg-green-500/10' : 'bg-dark-bg'}">
+            <span>${icon}</span>
+            <span class="text-sm flex-1">${label}</span>
+            <span class="${defined ? 'text-green-400' : 'text-dark-muted'}">${defined ? '✓' : '○'}</span>
+          </div>
+        `;
+          })
+          .join('');
+      }
+
+      // Renderizar decisiones
+      function renderDecisions() {
+        const decisions = data.decisions || [];
+        const emptyEl = document.getElementById('decisions-empty');
+        const listEl = document.getElementById('decisions-list');
+
+        emptyEl.classList.toggle('hidden', decisions.length > 0);
+
+        if (decisions.length === 0) {
+          listEl.innerHTML = '';
+          return;
+        }
+
+        listEl.innerHTML = decisions
+          .map(decision => {
+            const statusColors = {
+              aceptado: 'text-green-400',
+              accepted: 'text-green-400',
+              propuesto: 'text-yellow-400',
+              proposed: 'text-yellow-400',
+              rechazado: 'text-red-400',
+              rejected: 'text-red-400',
+            };
+            const color = statusColors[decision.status] || 'text-dark-muted';
+
+            return `
+          <div class="flex items-center gap-3 p-3 bg-dark-bg rounded-lg">
+            <span class="text-xs text-dark-muted">${decision.id}</span>
+            <span class="flex-1">${decision.title}</span>
+            <span class="text-xs ${color} capitalize">${decision.status}</span>
+          </div>
+        `;
+          })
+          .join('');
+      }
+
+      // Utilidades de formato
+      function formatDate(isoString) {
+        if (!isoString) return '-';
+        const date = new Date(isoString);
+        return date.toLocaleString('es', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+      }
+
+      function formatDateShort(dateString) {
+        if (!dateString) return '-';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('es', { month: 'short', day: 'numeric' });
+      }
+
+      // Inicializar
+      document.addEventListener('DOMContentLoaded', loadData);
+    </script>
+  </body>
+</html>
